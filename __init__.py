@@ -1,5 +1,5 @@
 from aqt import mw
-from anki.hooks import addHook
+from aqt import gui_hooks
 from aqt.webview import AnkiWebView
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -84,4 +84,4 @@ def setupMenu(browser):
     a.triggered.connect(lambda: showTagsInfoHighlight(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
 
-addHook("browser.setupMenus", setupMenu)
+gui_hooks.browser_menus_did_init.append(setupMenu)
