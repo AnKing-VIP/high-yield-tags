@@ -1,4 +1,5 @@
 {
   "default search": "Sketchy B&B Pathoma",
-  "update default": false 
+  "update default": false ,
+  "highlight color": "yellow"
 }

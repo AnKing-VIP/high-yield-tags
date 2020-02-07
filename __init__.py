@@ -61,7 +61,8 @@ def tagStats(cids, highlights=""):
             if highlight in lowerTag:
                 highlighted = True
                 break
-        htmlTag = f"""<span style="background-color:yellow">{tag}</span>""" if highlighted else tag
+        highlightColor = getUserOption("highlight color", "yellow")
+        htmlTag = f"""<span style="background-color:{highlightColor}">{tag}</span>""" if highlighted else tag
         percent = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
         table.append((nb, htmlTag ,percent))
     html = ("""<table border=1>""" +
