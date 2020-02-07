@@ -7,6 +7,14 @@ from PyQt5.QtWidgets import *
 from aqt.utils import restoreGeom
 from aqt.browser import *
 import math
+from .config import getUserOption, setUserOption
+
+def showTagsInfoHighlight(self, cids):
+    default = getUserOption("default search", "")
+    highlights = getOnlyText("Which tags to highlight? (space separated)", default=default)
+    if getUserOption("update default", False):
+        setUserOption("default search", highlights)
+    showTagsInfo(self, cids, highlights)
 
 def showTagsInfo(self, cids, highlights=""):
     if not self.card:
@@ -69,7 +77,7 @@ def setupMenu(browser):
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
     a.setShortcut(QKeySequence("Ctrl+shift+t"))
-    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards(), getOnlyText("Which tags to highlight? (space separated)")))
+    a.triggered.connect(lambda: showTagsInfoHighlight(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
 
 addHook("browser.setupMenus", setupMenu)
