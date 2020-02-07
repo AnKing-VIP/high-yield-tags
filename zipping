@@ -1,0 +1,2 @@
+rm nbTags.zip
+zip -R nbTags.zip config.* *py  LICENSE *.md zipping --exclude \*~ \*zip ankiweb
