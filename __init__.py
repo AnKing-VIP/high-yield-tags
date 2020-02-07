@@ -8,10 +8,10 @@ from aqt.utils import restoreGeom
 from aqt.browser import *
 import math
 
-def showTagsInfo(self, cids):
+def showTagsInfo(self, cids, highlights=""):
     if not self.card:
         return
-    info = tagStats(cids)
+    info = tagStats(cids, highlights)
     class CardInfoDialog(QDialog):
         silentlyClose = True
 
@@ -32,7 +32,9 @@ def showTagsInfo(self, cids):
     restoreGeom(dialog, "tagsList")
     dialog.show()
 
-def tagStats(cids):
+def tagStats(cids, highlights=""):
+    highlights = highlights.lower()
+    highlights = [highlight for highlight in highlights.split(" ") if highlight]
     tags = dict()
     nbCards = len(cids)
     for cid in cids:
@@ -45,8 +47,15 @@ def tagStats(cids):
     table = []
     for nb, tag in l:
         nbCardWithThisTag = len(mw.col.findCards(f""" "tag:{tag}" """))
+        highlighted = False
+        lowerTag = tag.lower()
+        for highlight in highlights:
+            if highlight in lowerTag:
+                highlighted = True
+                break
+        htmlTag = f"""<span style="background-color:yellow">{tag}</span>""" if highlighted else tag
         percent = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
-        table.append((nb,tag,percent))
+        table.append((nb, htmlTag ,percent))
     html = ("""<table border=1>""" +
             "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percent}</td></tr>""" for nb, tag, percent in table) +
             """</table>""")
@@ -55,8 +64,12 @@ def tagStats(cids):
 
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
-    a.setShortcut(QKeySequence("Ctrl+shift+t"))
+    a.setShortcut(QKeySequence("Ctrl+t"))
     a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
+    browser.form.menu_Help.addAction(a)
+    a = QAction("and highlight", browser)
+    a.setShortcut(QKeySequence("Ctrl+shift+t"))
+    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards(), getOnlyText("Which tags to highlight? (space separated)")))
     browser.form.menu_Help.addAction(a)
 
 addHook("browser.setupMenus", setupMenu)
