@@ -6,11 +6,12 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from aqt.utils import restoreGeom
 from aqt.browser import *
+import math
 
-def showTagsInfo(self, nids):
+def showTagsInfo(self, cids):
     if not self.card:
         return
-    info = tagStats(nids)
+    info = tagStats(cids)
     class CardInfoDialog(QDialog):
         silentlyClose = True
 
@@ -28,20 +29,26 @@ def showTagsInfo(self, nids):
     bb.rejected.connect(dialog.reject)
     dialog.setLayout(layout)
     dialog.setWindowModality(Qt.WindowModal)
-    dialog.resize(500, 400)
     restoreGeom(dialog, "tagsList")
     dialog.show()
 
-def tagStats(nids):
+def tagStats(cids):
     tags = dict()
-    for nid in nids:
-        note = mw.col.getNote(nid)
+    nbCards = len(cids)
+    for cid in cids:
+        card = mw.col.getCard(cid)
+        note = card.note()
         for tag in note.tags:
             tags[tag] = tags.get(tag, 0) + 1
     l = [(nb, tag) for tag, nb in tags.items()]
     l.sort(reverse=True)
+    table = []
+    for nb, tag in l:
+        nbCardWithThisTag = len(mw.col.findCards(f""" "tag:{tag}" """))
+        percent = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
+        table.append((nb,tag,percent))
     html = ("""<table border=1>""" +
-            "\n".join(f"<tr><td>{tag}</td><td>{nb}</td></tr>" for nb, tag in l) +
+            "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percent}</td></tr>""" for nb, tag, percent in table) +
             """</table>""")
     return html
     
@@ -49,7 +56,7 @@ def tagStats(nids):
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
     a.setShortcut(QKeySequence("Ctrl+shift+t"))
-    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedNotes()))
+    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
 
 addHook("browser.setupMenus", setupMenu)
