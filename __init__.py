@@ -63,10 +63,12 @@ def tagStats(cids, highlights=""):
                 break
         highlightColor = getUserOption("highlight color", "yellow")
         htmlTag = f"""<span style="background-color:{highlightColor}">{tag}</span>""" if highlighted else tag
-        percent = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
-        table.append((nb, htmlTag ,percent))
+        percentOfCardsWithThisTagWhichAreSelected = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
+        percentOfSelectedCardsWithThisTag = str(round((nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
+        table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
-            "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percent}</td></tr>""" for nb, tag, percent in table) +
+            "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td><td>{percentOfCardsWithThisTagWhichAreSelected}</td></tr>"""
+                      for nb, tag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
     return html
     
