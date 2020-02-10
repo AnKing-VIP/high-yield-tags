@@ -67,6 +67,7 @@ def tagStats(cids, highlights=""):
         percentOfSelectedCardsWithThisTag = str(round((nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
         table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
+            "<tr><td></td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tags Selected</td>" +
             "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td><td>{percentOfCardsWithThisTagWhichAreSelected}</td></tr>"""
                       for nb, tag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
