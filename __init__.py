@@ -76,11 +76,11 @@ def tagStats(cids, highlights=""):
 
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
-    a.setShortcut(QKeySequence("Ctrl+t"))
+    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'Number of tags'", "Ctrl+t")))
     a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
-    a.setShortcut(QKeySequence("Ctrl+shift+t"))
+    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'and highlight'", "Ctrl+shift+t")))
     a.triggered.connect(lambda: showTagsInfoHighlight(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
 
