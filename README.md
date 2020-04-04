@@ -18,7 +18,7 @@ I can see medical students using this in two main ways.n
   default will search “#Sketchy #B&B #Pathoma #Pixorize” (it
   highlights these tags so I can find them easier)
 
-![query](img1.tif)
+![query](img1.png)
 
 ![result](img2.png)
 
@@ -35,7 +35,7 @@ Key         |Value
 ------------|-------------------------------------------------------------------
 Copyright   | Arthur Milchior <arthur@milchior.fr>
 Based on    | Anki code by Damien Elmes <anki@ichi2.net>
-License     | GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+License     | GNU GPL, version 3 or later; http://www.gnu.org/licenses/gpl.html
 Source in   | https://github.com/Arthur-Milchior/anki-number-of-selected-tags.git
 Addon number| [1918380616](https://ankiweb.net/shared/info/1918380616)
 Commisionned by | u/DoctorToBeIn23 on reddit.
