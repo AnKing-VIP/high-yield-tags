@@ -10,16 +10,19 @@ import math
 from .config import getUserOption, setUserOption
 
 def showTagsInfoHighlight(self, cids):
-    default = getUserOption("default search", "")
+    default = getUserOption("default search")
     highlights = getOnlyText("Which tags to highlight? (space separated)", default=default)
-    if getUserOption("update default", False):
+    default_percent = getUserOption("default percent to box")
+    highlights_percent = getOnlyText("Highlights values above x %", default=default)
+    if getUserOption("update default"):
         setUserOption("default search", highlights)
-    showTagsInfo(self, cids, highlights)
+        setUserOption("default percent to box", highlights_percent)
+    showTagsInfo(self, cids, highlights, highlights_percent)
 
-def showTagsInfo(self, cids, highlights=""):
+def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     if not self.card:
         return
-    info = tagStats(cids, highlights)
+    info = tagStats(cids, highlights, highlights_percent)
     class CardInfoDialog(QDialog):
         silentlyClose = True
 
@@ -40,9 +43,13 @@ def showTagsInfo(self, cids, highlights=""):
     restoreGeom(dialog, "tagsList")
     dialog.show()
 
-def tagStats(cids, highlights=""):
+def tagStats(cids, highlights="", highlights_percent=50):
     highlights = highlights.lower()
     highlights = [highlight for highlight in highlights.split(" ") if highlight]
+    try:
+        highlights_percent = int(highlights_percent)
+    except:
+        highlights_percent = 100
     tags = dict()
     nbCards = len(cids)
     for cid in cids:
@@ -61,9 +68,12 @@ def tagStats(cids, highlights=""):
             if highlight in lowerTag:
                 highlighted = True
                 break
-        highlightColor = getUserOption("highlight color", "yellow")
+        highlightColor = getUserOption("highlight color")
         htmlTag = f"""<span style="background-color:{highlightColor}">{tag}</span>""" if highlighted else tag
-        percentOfCardsWithThisTagWhichAreSelected = str(round((nb*100)/nbCardWithThisTag))+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
+        percent_covered = round((nb*100)/nbCardWithThisTag)
+        percentOfCardsWithThisTagWhichAreSelected = str(percent_covered)+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
+        if percent_covered > highlights_percent:
+            percentOfCardsWithThisTagWhichAreSelected = f"""<p style="border:3px; border-style:solid; border-color:yellow; padding: 1em;">{percentOfCardsWithThisTagWhichAreSelected}</p>"""
         percentOfSelectedCardsWithThisTag = str(round((nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
         table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
@@ -76,11 +86,11 @@ def tagStats(cids, highlights=""):
 
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
-    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'Number of tags'", "Ctrl+t")))
+    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'Number of tags'")))
     a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
-    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'and highlight'", "Ctrl+shift+t")))
+    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'and highlight'")))
     a.triggered.connect(lambda: showTagsInfoHighlight(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
 
