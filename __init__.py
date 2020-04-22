@@ -18,11 +18,10 @@ def showTagsInfoHighlight(self, cids):
         "Which tags to highlight? (space separated)", default=default)
     default_percent = getUserOption("default percent to box")
     highlights_percent = getOnlyText(
-        "Highlights values above x %", default=default)
+        "Highlights values above x %", default=str(default_percent))
     if getUserOption("update default"):
         setUserOption("default search", highlights)
-        setUserOption("default percent to box", highlights_percent)
-    showTagsInfo(self, cids, highlights, highlights_percent)
+    showTagsInfo(self, cids, highlights)
 
 
 def showTagsInfo(self, cids, highlights="", highlights_percent=50):
@@ -98,11 +97,13 @@ def tagStats(cids, highlights="", highlights_percent=50):
 
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
-    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'Number of tags'")))
+    a.setShortcut(QKeySequence(getUserOption(
+        "Shortcut of 'number of tags'")))
     a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
-    a.setShortcut(QKeySequence(getUserOption("Shortcut of 'and highlight'")))
+    a.setShortcut(QKeySequence(getUserOption(
+        "Shortcut of 'and highlight'")))
     a.triggered.connect(lambda: showTagsInfoHighlight(
         browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)

@@ -43,7 +43,6 @@ def getUserOption(keys=None):
     current_default = default
     change = False
     for key in keys:
-        print(f"current is {current}")
         assert isinstance(current, dict)
         if key not in current:
             current[key] = current_default[key]

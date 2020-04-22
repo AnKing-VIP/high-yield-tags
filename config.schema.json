@@ -30,5 +30,10 @@
       "description": "whether to change this value when you search for something else",
       "default": false
     }
+  },
+  "default percent to box": {
+    "type": "number",
+    "description": "if the percent of tag covered is at least this value, it get boxed",
+    "default": 50
   }
 }
