@@ -81,7 +81,7 @@ def tagStats(cids, highlights="", highlights_percent=50):
         percent_covered = round((nb*100)/nbCardWithThisTag)
         percentOfCardsWithThisTagWhichAreSelected = str(
             percent_covered)+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
-        if percent_covered > highlights_percent:
+        if highlighted and percent_covered > highlights_percent:
             percentOfCardsWithThisTagWhichAreSelected = f"""<td style="border:1px solid yellow">{percentOfCardsWithThisTagWhichAreSelected}</td>"""
         else:
             percentOfCardsWithThisTagWhichAreSelected = f"""<td>{percentOfCardsWithThisTagWhichAreSelected}</td>"""
