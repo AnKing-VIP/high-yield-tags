@@ -40,3 +40,4 @@ Source in   | https://github.com/Arthur-Milchior/anki-number-of-selected-tags.gi
 Addon number| [1918380616](https://ankiweb.net/shared/info/1918380616)
 Commisionned by | u/DoctorToBeIn23 on reddit.
 Readme by | u/DoctorToBeIn23 on reddit.
+Support me on| [![Ko-fi](https://ko-fi.com/img/Kofi_Logo_Blue.svg)](Ko-fi.com/arthurmilchior) or [![Patreon](http://www.milchior.fr/patreon.png)](https://www.patreon.com/bePatron?u=146206)
