@@ -12,6 +12,7 @@ userOption = None
 addon = mw.addonManager.addonFromModule(__name__)
 default = mw.addonManager.addonConfigDefaults(__name__)
 
+
 def _getUserOption():
     global userOption
     if userOption is None:
@@ -59,9 +60,9 @@ def getUserOption(keys=None):
         writeConfig()
     return current
 
+
 def writeConfig():
     mw.addonManager.writeConfig(__name__, userOption)
-
 
 
 def update(_):

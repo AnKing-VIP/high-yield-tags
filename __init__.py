@@ -1,28 +1,35 @@
-from aqt import mw
-from aqt import gui_hooks
-from aqt.webview import AnkiWebView
+import math
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from aqt.utils import restoreGeom
+
+from aqt import gui_hooks, mw
 from aqt.browser import *
-import math
+from aqt.utils import restoreGeom
+from aqt.webview import AnkiWebView
+
 from .config import getUserOption, setUserOption
+
 
 def showTagsInfoHighlight(self, cids):
     default = getUserOption("default search")
-    highlights = getOnlyText("Which tags to highlight? (space separated)", default=default)
+    highlights = getOnlyText(
+        "Which tags to highlight? (space separated)", default=default)
     default_percent = getUserOption("default percent to box")
-    highlights_percent = getOnlyText("Highlights values above x %", default=default)
+    highlights_percent = getOnlyText(
+        "Highlights values above x %", default=default)
     if getUserOption("update default"):
         setUserOption("default search", highlights)
         setUserOption("default percent to box", highlights_percent)
     showTagsInfo(self, cids, highlights, highlights_percent)
 
+
 def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     if not self.card:
         return
     info = tagStats(cids, highlights, highlights_percent)
+
     class CardInfoDialog(QDialog):
         silentlyClose = True
 
@@ -31,7 +38,7 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
             return QDialog.reject(self)
     dialog = CardInfoDialog(self)
     layout = QVBoxLayout()
-    layout.setContentsMargins(0,0,0,0)
+    layout.setContentsMargins(0, 0, 0, 0)
     view = AnkiWebView()
     layout.addWidget(view)
     view.stdHtml(info)
@@ -43,9 +50,11 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     restoreGeom(dialog, "tagsList")
     dialog.show()
 
+
 def tagStats(cids, highlights="", highlights_percent=50):
     highlights = highlights.lower()
-    highlights = [highlight for highlight in highlights.split(" ") if highlight]
+    highlights = [
+        highlight for highlight in highlights.split(" ") if highlight]
     try:
         highlights_percent = int(highlights_percent)
     except:
@@ -71,18 +80,21 @@ def tagStats(cids, highlights="", highlights_percent=50):
         highlightColor = getUserOption("highlight color")
         htmlTag = f"""<span style="background-color:{highlightColor}">{tag}</span>""" if highlighted else tag
         percent_covered = round((nb*100)/nbCardWithThisTag)
-        percentOfCardsWithThisTagWhichAreSelected = str(percent_covered)+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
+        percentOfCardsWithThisTagWhichAreSelected = str(
+            percent_covered)+"%" if nbCardWithThisTag else "Error: no card with this tag in the fcollection."
         if percent_covered > highlights_percent:
             percentOfCardsWithThisTagWhichAreSelected = f"""<p style="border:3px; border-style:solid; border-color:yellow; padding: 1em;">{percentOfCardsWithThisTagWhichAreSelected}</p>"""
-        percentOfSelectedCardsWithThisTag = str(round((nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
-        table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected))
+        percentOfSelectedCardsWithThisTag = str(round(
+            (nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
+        table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag,
+                      percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
             "<tr><td></td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
             "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td><td>{percentOfCardsWithThisTagWhichAreSelected}</td></tr>"""
                       for nb, tag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
     return html
-    
+
 
 def setupMenu(browser):
     a = QAction("Number of tags", browser)
@@ -91,7 +103,9 @@ def setupMenu(browser):
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
     a.setShortcut(QKeySequence(getUserOption("Shortcut of 'and highlight'")))
-    a.triggered.connect(lambda: showTagsInfoHighlight(browser, browser.selectedCards()))
+    a.triggered.connect(lambda: showTagsInfoHighlight(
+        browser, browser.selectedCards()))
     browser.form.menu_Help.addAction(a)
+
 
 gui_hooks.browser_menus_did_init.append(setupMenu)
