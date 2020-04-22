@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "High Yield Tags",
+  "properties": {
+    "default search": {
+      "type": "string",
+      "description": "The value given by default when you click on search",
+      "default": "Sketchy B&B Pathoma"
+    },
+    "highlight color": {
+      "type": "string",
+      "description": "The color applied to searched tags",
+      "default": "yellow"
+    },
+    "Shortcut of 'number of tags'": {
+      "type": "string",
+      "description": "Short cut for High Yield Tags without search",
+      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]))?$",
+      "default": "Ctrl+t"
+    },
+    "Shortcut of 'and highlight'": {
+      "type": "string",
+      "description": "Short cut for High Yield Tags with search",
+      "default": "Ctrl+Shift+t",
+      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]))?$"
+    },
+    "update default": {
+      "type": "boolean",
+      "description": "whether to change this value when you search for something else",
+      "default": false
+    }
+  }
+}
