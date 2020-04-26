@@ -101,12 +101,12 @@ def tagStats(cids, highlights="", highlights_percent=50):
             percentOfCardsWithThisTagWhichAreSelected = f"""<td>{percentOfCardsWithThisTagWhichAreSelected}</td>"""
         percentOfSelectedCardsWithThisTag = str(round(
             (nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
-        table.append((nb, htmlTag, percentOfSelectedCardsWithThisTag,
+        table.append((nb, tag, htmlTag, percentOfSelectedCardsWithThisTag,
                       percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
             "<tr><td></td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
-            "\n".join(f"""<tr><td><input type="checkbox" onclick="pycmd('high_yeld_tag:{tag}');"/><td><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
-                      for nb, tag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
+            "\n".join(f"""<tr><td><input type="checkbox" onclick="pycmd('high_yeld_tag:{tag}');"/><td><td>{htmlTag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
+                      for nb, tag, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
     return html
 
@@ -131,7 +131,7 @@ gui_hooks.browser_menus_did_init.append(setupMenu)
 def select_tag(message, cmd, context):
     if not cmd.startswith("high_yeld_tag:"):
         return message
-    (hyt, tag) = cmd.split(":")
+    (hyt, tag) = cmd.split(":", 1)
     print(tag)
     if tag in selected_tags:
         selected_tags.remove(tag)
