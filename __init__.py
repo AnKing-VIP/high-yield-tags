@@ -4,13 +4,15 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from anki.consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.browser import *
-from aqt.utils import restoreGeom
+from aqt.utils import restoreGeom, getText
 from aqt.webview import AnkiWebView
 
 from .config import getUserOption, setUserOption
 
+selected_tags = set()
 
 def showTagsInfoHighlight(self, cids):
     default = getUserOption("default search")
@@ -34,6 +36,17 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
 
         def reject(self):
             saveGeom(self, "tagsList")
+            if selected_tags:
+                (d_name, ret) = getText("Deck name for this tag selection", parent=self)
+                if d_name and ret:
+                    did = mw.col.decks.newDyn(d_name)
+                    deck = mw.col.decks.get(did)
+                    assert(deck["dyn"] == DECK_DYN)
+                    search = " or ".join(f"""("tag:{tag}")""" for tag in selected_tags)
+                    deck["terms"][0][0] = search
+                    mw.col.decks.save(deck)
+
+
             return QDialog.reject(self)
     dialog = CardInfoDialog(self)
     layout = QVBoxLayout()
@@ -47,6 +60,7 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     dialog.setLayout(layout)
     dialog.setWindowModality(Qt.WindowModal)
     restoreGeom(dialog, "tagsList")
+    selected_tags.clear()
     dialog.show()
 
 
@@ -91,7 +105,7 @@ def tagStats(cids, highlights="", highlights_percent=50):
                       percentOfCardsWithThisTagWhichAreSelected))
     html = ("""<table border=1>""" +
             "<tr><td></td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
-            "\n".join(f"""<tr><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
+            "\n".join(f"""<tr><td><input type="checkbox" onclick="pycmd('high_yeld_tag:{tag}');"/><td><td>{tag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
                       for nb, tag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
     return html
@@ -112,3 +126,17 @@ def setupMenu(browser):
 
 
 gui_hooks.browser_menus_did_init.append(setupMenu)
+
+
+def select_tag(message, cmd, context):
+    if not cmd.startswith("high_yeld_tag:"):
+        return message
+    (hyt, tag) = cmd.split(":")
+    print(tag)
+    if tag in selected_tags:
+        selected_tags.remove(tag)
+    else:
+        selected_tags.add(tag)
+    return (True, None)
+
+gui_hooks.webview_did_receive_js_message.append(select_tag)

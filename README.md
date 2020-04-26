@@ -22,7 +22,11 @@ I can see medical students using this in two main ways.n
 
 ![result](img2.png)
 
+## Filtered deck
 
+If you click on the box, left of tags, Anki will ask for a deck
+name. This name should be new or a filtered deck. This deck will
+be filtered, and it will search for cards win of those tag.
 
 ## Configuration
 There are two configurations: 
