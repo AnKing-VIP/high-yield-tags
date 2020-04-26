@@ -82,15 +82,16 @@ def tagStats(cids, highlights="", highlights_percent=50):
     l = [(nb, tag) for tag, nb in tags.items()]
     l.sort(reverse=True)
     table = []
+    highlightColor = getUserOption("highlight color")
     for nb, tag in l:
-        nbCardWithThisTag = len(mw.col.findCards(f""" "tag:{tag}" """))
+        search = f""" tag:{tag} """
+        nbCardWithThisTag = len(mw.col.findCards(search))
         highlighted = False
         lowerTag = tag.lower()
         for highlight in highlights:
             if highlight in lowerTag:
                 highlighted = True
                 break
-        highlightColor = getUserOption("highlight color")
         htmlTag = f"""<span style="background-color:{highlightColor}">{tag}</span>""" if highlighted else tag
         percent_covered = round((nb*100)/nbCardWithThisTag)
         percentOfCardsWithThisTagWhichAreSelected = str(
@@ -103,9 +104,14 @@ def tagStats(cids, highlights="", highlights_percent=50):
             (nb*100)/nbCards))+"%" if nbCardWithThisTag else "Error: no card with this tag in the collection."
         table.append((nb, tag, htmlTag, percentOfSelectedCardsWithThisTag,
                       percentOfCardsWithThisTagWhichAreSelected))
-    html = ("""<table border=1>""" +
-            "<tr><td></td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
-            "\n".join(f"""<tr><td><input type="checkbox" onclick="pycmd('high_yeld_tag:{tag}');"/><td><td>{htmlTag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
+    html = ("""<script>
+function high_yeld_tag(tag) {
+  var cmd = "high_yeld_tag:" + tag;
+  pycmd(cmd);
+}
+</script><table border=1>""" +
+            "<tr><td></td><td>Tag</td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
+            "\n".join(f"""<tr><td><input type="checkbox" onclick="high_yeld_tag(&quot;{tag}&quot;);"/></td><td>{htmlTag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
                       for nb, tag, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
     return html
