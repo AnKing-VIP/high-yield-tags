@@ -23,7 +23,7 @@ def showTagsInfoHighlight(self, cids):
         "Highlights values above x %", default=str(default_percent))
     if getUserOption("update default"):
         setUserOption("default search", highlights)
-    showTagsInfo(self, cids, highlights)
+    showTagsInfo(self, cids, highlights, highlights_percent)
 
 
 def showTagsInfo(self, cids, highlights="", highlights_percent=50):
