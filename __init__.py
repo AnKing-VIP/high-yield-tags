@@ -45,6 +45,8 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
                     search = " or ".join(f"""("tag:{tag}")""" for tag in selected_tags)
                     deck["terms"][0][0] = search
                     mw.col.decks.save(deck)
+                    mw.col.sched.rebuildDyn(did)
+                    mw.reset()
 
 
             return QDialog.reject(self)
@@ -84,7 +86,7 @@ def tagStats(cids, highlights="", highlights_percent=50):
     table = []
     highlightColor = getUserOption("highlight color")
     for nb, tag in l:
-        search = f""" tag:{tag} """
+        search = f""" "tag:{tag}" """
         nbCardWithThisTag = len(mw.col.findCards(search))
         highlighted = False
         lowerTag = tag.lower()
