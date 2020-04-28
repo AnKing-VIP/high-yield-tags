@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from anki.consts import DECK_DYN
+from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.browser import *
 from aqt.utils import restoreGeom, getText
