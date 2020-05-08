@@ -16,11 +16,15 @@ selected_tags = set()
 
 def showTagsInfoHighlight(self, cids):
     default = getUserOption("default search")
-    highlights = getOnlyText(
+    highlights, ret = getText(
         "Which tags to highlight? (space separated)", default=default)
+    if not ret:
+        return
     default_percent = getUserOption("default percent to box")
-    highlights_percent = getOnlyText(
+    highlights_percent, ret = getText(
         "Highlights values above x %", default=str(default_percent))
+    if not ret:
+        return
     if getUserOption("update default"):
         setUserOption("default search", highlights)
     showTagsInfo(self, cids, highlights, highlights_percent)
