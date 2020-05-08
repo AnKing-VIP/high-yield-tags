@@ -44,6 +44,7 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
                     assert(deck["dyn"] == DECK_DYN)
                     search = " or ".join(f"""("tag:{tag}")""" for tag in selected_tags)
                     deck["terms"][0][0] = search
+                    deck["terms"][0][1] = 99999
                     mw.col.decks.save(deck)
                     mw.col.sched.rebuildDyn(did)
                     mw.reset()
