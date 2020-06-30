@@ -14,7 +14,7 @@ I can see medical students using this in two main ways.n
 
 ## Example:
 * I finished all the lectures for the coming exam (or you can do it after each lecture) and now I want to find what Sketchy, B&B, Pathoma, or Pixorize video I can watch to refresh on the concepts that will be on the exam… 
-* Highlight all Exam 02 and use the shortcut Command+Shift+T the
+* Highlight all Exam 02 and use the shortcut "Ctrl/Command+T, V" the
   default will search “#Sketchy #B&B #Pathoma #Pixorize” (it
   highlights these tags so I can find them easier)
 
