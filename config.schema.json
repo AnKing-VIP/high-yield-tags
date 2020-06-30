@@ -16,14 +16,14 @@
     "Shortcut of 'number of tags'": {
       "type": "string",
       "description": "Short cut for High Yield Tags without search",
-      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]))?$",
+      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]),?)*$",
       "default": "Ctrl+t"
     },
     "Shortcut of 'and highlight'": {
       "type": "string",
       "description": "Short cut for High Yield Tags with search",
       "default": "Ctrl+Shift+t",
-      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]))?$"
+      "pattern": "^((([Cc][Tt][Rr][Ll]|[Aa][Ll][Tt]|[Ss][Hh][Ii][Ff][Tt])\\+){0,3}([a-zA-Z0-9]|F[1-9]|F1[0-2]),?)*$"
     },
     "update default": {
       "type": "boolean",
