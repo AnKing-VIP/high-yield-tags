@@ -1,11 +1,8 @@
 import math
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
+from aqt.qt import *
 from aqt.browser import *
 from aqt.utils import restoreGeom, getText, saveGeom
 from aqt.webview import AnkiWebView
@@ -62,11 +59,11 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     view = AnkiWebView()
     layout.addWidget(view)
     view.stdHtml(info)
-    bb = QDialogButtonBox(QDialogButtonBox.Close)
+    bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
     layout.addWidget(bb)
     bb.rejected.connect(dialog.reject)
     dialog.setLayout(layout)
-    dialog.setWindowModality(Qt.WindowModal)
+    dialog.setWindowModality(Qt.WindowModality.WindowModal)
     restoreGeom(dialog, "tagsList")
     selected_tags.clear()
     dialog.show()
