@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.browser import *
-from aqt.utils import restoreGeom, getText
+from aqt.utils import restoreGeom, getText, saveGeom
 from aqt.webview import AnkiWebView
 
 from .config import getUserOption, setUserOption
