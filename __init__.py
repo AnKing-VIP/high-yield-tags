@@ -12,6 +12,8 @@ from .config import getUserOption, setUserOption
 selected_tags = set()
 
 def showTagsInfoHighlight(self, cids):
+    if not cids:
+        return
     default = getUserOption("default search")
     highlights, ret = getText(
         "Which tags to highlight? (space separated)", default=default)
@@ -28,7 +30,7 @@ def showTagsInfoHighlight(self, cids):
 
 
 def showTagsInfo(self, cids, highlights="", highlights_percent=50):
-    if not self.card:
+    if not cids:
         return
     info = tagStats(cids, highlights, highlights_percent)
 
