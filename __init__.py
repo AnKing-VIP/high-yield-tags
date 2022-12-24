@@ -1,3 +1,4 @@
+import re
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.qt import *
@@ -68,6 +69,8 @@ def showTagsInfo(self, cids, nids, highlights="", highlights_percent=50):
     selected_tags.clear()
     dialog.show()
 
+def escape_tag(tag):
+    return re.escape(tag).replace("'", "''")
 
 def tagStats(cids, nids, highlights="", highlights_percent=50):
     highlights = highlights.lower()
@@ -88,8 +91,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
     table = []
     highlightColor = getUserOption("highlight color")
     for nb, tag in l:
-        search = f""" "tag:{tag}" """
-        nbCardWithThisTag = len(mw.col.findCards(search))
+        nbCardWithThisTag = mw.col.db.scalar("select count(c.id) from cards c, notes n where c.nid=n.id and (n.tags regexp '(?i).* %s(::| ).*')" % escape_tag(tag))
         highlighted = False
         lowerTag = tag.lower()
         for highlight in highlights:
