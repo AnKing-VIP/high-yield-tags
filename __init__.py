@@ -72,6 +72,15 @@ def showTagsInfo(self, cids, nids, highlights="", highlights_percent=50):
 def escape_tag(tag):
     return re.escape(tag).replace("'", "''")
 
+def tag_and_parents(tag):
+    components = tag.split("::")
+    yield components[0]
+    for i in range(1, len(components)):
+        comp = components[i]
+        parents = components[0:i]
+        yield '::'.join(parents) + '::' + comp
+
+
 def tagStats(cids, nids, highlights="", highlights_percent=50):
     highlights = highlights.lower()
     highlights = [
@@ -90,8 +99,16 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
     l.sort(reverse=True)
     table = []
     highlightColor = getUserOption("highlight color")
+
+    tag_freqs = {}
+    for ntags, ccount in mw.col.db.execute('select n.tags, (select count() from cards c where c.nid=n.id) from notes n'):
+        for tag in ntags.split():
+            for parent in tag_and_parents(tag):
+                tag_freqs.setdefault(parent, 0)
+                tag_freqs[parent] += ccount
+
     for nb, tag in l:
-        nbCardWithThisTag = mw.col.db.scalar("select count(c.id) from cards c, notes n where c.nid=n.id and (n.tags regexp '(?i).* %s(::| ).*')" % escape_tag(tag))
+        nbCardWithThisTag = tag_freqs[tag]
         highlighted = False
         lowerTag = tag.lower()
         for highlight in highlights:
