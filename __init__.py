@@ -1,4 +1,7 @@
+from concurrent.futures import Future
+import functools
 import re
+from time import time
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.qt import *
@@ -10,7 +13,7 @@ from .config import getUserOption, setUserOption
 
 selected_tags = set()
 
-def showTagsInfoHighlight(self, cids, nids):
+def showTagsInfoHighlight(browser, cids, nids):
     if not cids:
         return
     default = getUserOption("default search")
@@ -25,13 +28,12 @@ def showTagsInfoHighlight(self, cids, nids):
         return
     if getUserOption("update default"):
         setUserOption("default search", highlights)
-    showTagsInfo(self, cids, nids, highlights, highlights_percent)
+    showTagsInfo(browser, cids, nids, highlights, highlights_percent)
 
 
-def showTagsInfo(self, cids, nids, highlights="", highlights_percent=50):
+def showTagsInfo(browser, cids, nids, highlights="", highlights_percent=50):
     if not cids:
         return
-    info = tagStats(cids, nids, highlights, highlights_percent)
 
     class CardInfoDialog(QDialog):
         silentlyClose = True
@@ -54,20 +56,30 @@ def showTagsInfo(self, cids, nids, highlights="", highlights_percent=50):
 
 
             return QDialog.reject(self)
-    dialog = CardInfoDialog(self)
-    layout = QVBoxLayout()
-    layout.setContentsMargins(0, 0, 0, 0)
-    view = AnkiWebView()
-    layout.addWidget(view)
-    view.stdHtml(info)
-    bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
-    layout.addWidget(bb)
-    bb.rejected.connect(dialog.reject)
-    dialog.setLayout(layout)
-    dialog.setWindowModality(Qt.WindowModality.WindowModal)
-    restoreGeom(dialog, "tagsList")
-    selected_tags.clear()
-    dialog.show()
+
+    def on_done(fut: Future):
+        mw.progress.finish()
+        info = fut.result()
+        if not info:
+            return
+        dialog = CardInfoDialog(browser)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        view = AnkiWebView()
+        layout.addWidget(view)
+        view.stdHtml(info)
+        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        layout.addWidget(bb)
+        bb.rejected.connect(dialog.reject)
+        dialog.setLayout(layout)
+        dialog.setWindowModality(Qt.WindowModality.WindowModal)
+        restoreGeom(dialog, "tagsList")
+        selected_tags.clear()
+        dialog.show()
+
+    mw.progress.start(100, 0, label="Processing cards...", parent=browser)
+    mw.progress.set_title("High Yield Tags")
+    mw.taskman.run_in_background(lambda: tagStats(cids, nids, highlights, highlights_percent), on_done)
 
 def escape_tag(tag):
     return re.escape(tag).replace("'", "''")
@@ -91,7 +103,18 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
         highlights_percent = 100
     tags = dict()
     nbCards = len(cids)
-    for nid in nids:
+    last_progress = 0
+    want_cancel = False
+    def on_note_progress(i, total):
+        mw.progress.update(f"Processing note {i} out of {total}", value=i, max=total)
+        nonlocal want_cancel
+        want_cancel = mw.progress.want_cancel()
+
+    for i, nid in enumerate(nids, 1):
+        if time() - last_progress >= 0.1:
+            mw.taskman.run_on_main(functools.partial(on_note_progress, i=i, total=len(nids)))
+            if want_cancel:
+                return ''
         note = mw.col.getNote(nid)
         for tag in note.tags:
             tags[tag] = tags.get(tag, 0) + 1
@@ -100,6 +123,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
     table = []
     highlightColor = getUserOption("highlight color")
 
+    mw.taskman.run_on_main(lambda: mw.progress.update("Collecting tag frequencies..."))
     tag_freqs = {}
     for ntags, ccount in mw.col.db.execute('select n.tags, (select count() from cards c where c.nid=n.id) from notes n'):
         for tag in ntags.split():
@@ -107,7 +131,17 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
                 tag_freqs.setdefault(parent, 0)
                 tag_freqs[parent] += ccount
 
-    for nb, tag in l:
+    last_progress = 0
+    def on_tag_progress(i, total):
+        mw.progress.update(f"Processing tag {i} out of {total}", value=i, max=total)
+        nonlocal want_cancel
+        want_cancel = mw.progress.want_cancel()
+
+    for i, (nb, tag) in enumerate(l, 1):
+        if time() - last_progress >= 0.1:
+            mw.taskman.run_on_main(functools.partial(on_tag_progress, i=i, total=len(l)))
+            if want_cancel:
+                return ''
         nbCardWithThisTag = tag_freqs[tag]
         highlighted = False
         lowerTag = tag.lower()
