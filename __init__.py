@@ -36,9 +36,11 @@ def showTagsInfo(browser, cids, nids, highlights="", highlights_percent=50):
         return
 
     class CardInfoDialog(QDialog):
-        silentlyClose = True
+        def __init__(self, parent) -> None:
+            super().__init__(parent)
+            qconnect(self.finished, self.on_close)
 
-        def reject(self):
+        def on_close(self):
             saveGeom(self, "tagsList")
             if selected_tags:
                 (d_name, ret) = getText("Deck name for this tag selection", parent=self)
@@ -54,8 +56,6 @@ def showTagsInfo(browser, cids, nids, highlights="", highlights_percent=50):
                     mw.col.sched.rebuildDyn(did)
                     mw.reset()
 
-
-            return QDialog.reject(self)
 
     def on_done(fut: Future):
         mw.progress.finish()
