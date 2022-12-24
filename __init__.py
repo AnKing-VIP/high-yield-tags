@@ -1,5 +1,3 @@
-import math
-
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.qt import *
@@ -11,7 +9,7 @@ from .config import getUserOption, setUserOption
 
 selected_tags = set()
 
-def showTagsInfoHighlight(self, cids):
+def showTagsInfoHighlight(self, cids, nids):
     if not cids:
         return
     default = getUserOption("default search")
@@ -26,13 +24,13 @@ def showTagsInfoHighlight(self, cids):
         return
     if getUserOption("update default"):
         setUserOption("default search", highlights)
-    showTagsInfo(self, cids, highlights, highlights_percent)
+    showTagsInfo(self, cids, nids, highlights, highlights_percent)
 
 
-def showTagsInfo(self, cids, highlights="", highlights_percent=50):
+def showTagsInfo(self, cids, nids, highlights="", highlights_percent=50):
     if not cids:
         return
-    info = tagStats(cids, highlights, highlights_percent)
+    info = tagStats(cids, nids, highlights, highlights_percent)
 
     class CardInfoDialog(QDialog):
         silentlyClose = True
@@ -71,7 +69,7 @@ def showTagsInfo(self, cids, highlights="", highlights_percent=50):
     dialog.show()
 
 
-def tagStats(cids, highlights="", highlights_percent=50):
+def tagStats(cids, nids, highlights="", highlights_percent=50):
     highlights = highlights.lower()
     highlights = [
         highlight for highlight in highlights.split(" ") if highlight]
@@ -81,9 +79,8 @@ def tagStats(cids, highlights="", highlights_percent=50):
         highlights_percent = 100
     tags = dict()
     nbCards = len(cids)
-    for cid in cids:
-        card = mw.col.getCard(cid)
-        note = card.note()
+    for nid in nids:
+        note = mw.col.getNote(nid)
         for tag in note.tags:
             tags[tag] = tags.get(tag, 0) + 1
     l = [(nb, tag) for tag, nb in tags.items()]
@@ -128,13 +125,13 @@ def setupMenu(browser):
     a = QAction("Number of tags", browser)
     a.setShortcut(QKeySequence(getUserOption(
         "Shortcut of 'number of tags'")))
-    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards()))
+    a.triggered.connect(lambda: showTagsInfo(browser, browser.selectedCards(), browser.selectedNotes()))
     browser.form.menu_Help.addAction(a)
     a = QAction("and highlight", browser)
     a.setShortcut(QKeySequence(getUserOption(
         "Shortcut of 'and highlight'")))
     a.triggered.connect(lambda: showTagsInfoHighlight(
-        browser, browser.selectedCards()))
+        browser, browser.selectedCards(), browser.selectedNotes()))
     browser.form.menu_Help.addAction(a)
 
 
