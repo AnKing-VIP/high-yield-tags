@@ -8,6 +8,7 @@ from aqt.qt import *
 from aqt.browser import *
 from aqt.utils import restoreGeom, getText, saveGeom
 from aqt.webview import AnkiWebView
+from aqt.theme import theme_manager
 
 from .config import getUserOption, setUserOption
 
@@ -121,7 +122,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
     l = [(nb, tag) for tag, nb in tags.items()]
     l.sort(reverse=True)
     table = []
-    highlightColor = getUserOption("highlight color")
+    highlightColor = getUserOption("dark highlight color") if theme_manager.night_mode else getUserOption("highlight color")
 
     mw.taskman.run_on_main(lambda: mw.progress.update("Collecting tag frequencies..."))
     tag_freqs = {}

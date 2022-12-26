@@ -10,8 +10,13 @@
     },
     "highlight color": {
       "type": "string",
-      "description": "The color applied to searched tags",
-      "default": "yellow"
+      "description": "The color applied to searched tags in light mode",
+      "default": "#ffff80"
+    },
+    "dark highlight color": {
+      "type": "string",
+      "description": "The color applied to searched tags in dark mode",
+      "default": "#85b1e2"
     },
     "Shortcut of 'number of tags'": {
       "type": "string",
