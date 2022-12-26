@@ -167,7 +167,35 @@ function high_yeld_tag(tag) {
   pycmd(cmd);
 }
 </script><table border=1>""" +
-            "<tr><td></td><td>Tag</td><td width=\"25px\"># Card w/Tags</td><td width=\"25px\">% Cards Selected</td><td width=\"25px\">% Tag Covered</td>" +
+"""
+<style>
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+td {
+    overflow-wrap: break-word;
+}
+td:nth-of-type(1) {
+    width: max(5%, 25px);
+    text-align: center;
+}
+td:nth-of-type(2) {
+    width: 80%;
+}
+td:nth-of-type(3) {
+    width: max(5%, 25px);
+}
+td:nth-of-type(4) {
+    width: max(5%, 25px);
+}
+td:nth-of-type(5) {
+    width: max(5%, 25px);
+}
+
+</style>
+"""
+            "<tr><td></td><td>Tag</td><td ># Card w/Tags</td><td >% Cards Selected</td><td >% Tag Covered</td>" +
             "\n".join(f"""<tr><td><input type="checkbox" onclick="high_yeld_tag(&quot;{tag}&quot;);"/></td><td>{htmlTag}</td><td>{nb}</td><td>{percentOfSelectedCardsWithThisTag}</td>{percentOfCardsWithThisTagWhichAreSelected}</tr>"""
                       for nb, tag, htmlTag, percentOfSelectedCardsWithThisTag, percentOfCardsWithThisTagWhichAreSelected in table) +
             """</table>""")
