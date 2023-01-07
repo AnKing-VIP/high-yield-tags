@@ -118,8 +118,12 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
                 return ''
         note = mw.col.getNote(nid)
         card_count = len(note.card_ids())
+        seen_tags = set()
         for tag in note.tags:
-            tags[tag] = tags.get(tag, 0) + card_count
+            for parent in tag_and_parents(tag):
+                if parent not in seen_tags:
+                    tags[parent] = tags.get(parent, 0) + card_count
+                    seen_tags.add(parent)
     l = [(nb, tag) for tag, nb in tags.items()]
     l.sort(reverse=True)
     table = []
