@@ -1,0 +1,8 @@
+aqt
+pyqt5
+pyqt6
+pyqtwebengine
+pyqt6-webengine
+git+https://github.com/glutanimate/anki-addon-builder.git#egg=aab[qt5,qt6]
+mypy
+black

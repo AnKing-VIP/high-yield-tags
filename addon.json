@@ -1,0 +1,13 @@
+{
+    "display_name": "High Yield Tags",
+    "module_name": "high_yield_tags",
+    "repo_name": "high-yield-tags",
+    "ankiweb_id": "1918380616",
+    "author": "Arthur Milchior & The AnKing",
+    "conflicts": [],
+    "targets": [
+        "anki21"
+    ],
+    "min_anki_version" : "2.1.20",
+    "max_tested_anki_version" : "2.1.55"
+}
