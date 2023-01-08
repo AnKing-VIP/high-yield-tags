@@ -4,6 +4,7 @@
     "repo_name": "high-yield-tags",
     "ankiweb_id": "1918380616",
     "author": "Arthur Milchior & The AnKing",
+    "homepage": "https://github.com/AnKingMed/high-yield-tags",
     "conflicts": [],
     "targets": [
         "anki21"
