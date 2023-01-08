@@ -132,10 +132,13 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
     mw.taskman.run_on_main(lambda: mw.progress.update("Collecting tag frequencies..."))
     tag_freqs = {}
     for ntags, ccount in mw.col.db.execute('select n.tags, (select count() from cards c where c.nid=n.id) from notes n'):
+        seen_tags = set()
         for tag in ntags.split():
             for parent in tag_and_parents(tag):
-                tag_freqs.setdefault(parent, 0)
-                tag_freqs[parent] += ccount
+                if parent not in seen_tags:
+                    tag_freqs.setdefault(parent, 0)
+                    tag_freqs[parent] += ccount
+                    seen_tags.add(parent)
 
     last_progress = 0
     def on_tag_progress(i, total):
