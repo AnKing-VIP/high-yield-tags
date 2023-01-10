@@ -9,6 +9,6 @@
     "targets": [
         "anki21"
     ],
-    "min_anki_version" : "2.1.20",
+    "min_anki_version" : "2.1.36",
     "max_tested_anki_version" : "2.1.55"
 }
