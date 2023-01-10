@@ -1,7 +1,7 @@
 from concurrent.futures import Future
 import functools
 import re
-from time import time
+import time
 from .consts import DECK_DYN
 from aqt import gui_hooks, mw
 from aqt.qt import *
@@ -112,7 +112,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
         want_cancel = mw.progress.want_cancel()
 
     for i, nid in enumerate(nids, 1):
-        if time() - last_progress >= 0.1:
+        if time.time() - last_progress >= 0.1:
             mw.taskman.run_on_main(functools.partial(on_note_progress, i=i, total=len(nids)))
             if want_cancel:
                 return ''
@@ -147,7 +147,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
         want_cancel = mw.progress.want_cancel()
 
     for i, (nb, tag) in enumerate(l, 1):
-        if time() - last_progress >= 0.1:
+        if time.time() - last_progress >= 0.1:
             mw.taskman.run_on_main(functools.partial(on_tag_progress, i=i, total=len(l)))
             if want_cancel:
                 return ''
