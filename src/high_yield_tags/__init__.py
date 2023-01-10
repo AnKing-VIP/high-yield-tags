@@ -117,7 +117,7 @@ def tagStats(cids, nids, highlights="", highlights_percent=50):
             if want_cancel:
                 return ''
         note = mw.col.getNote(nid)
-        card_count = len(note.card_ids())
+        card_count = len(mw.col.card_ids_of_note(note.id))
         seen_tags = set()
         for tag in note.tags:
             for parent in tag_and_parents(tag):
